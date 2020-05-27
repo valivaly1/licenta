@@ -1,26 +1,4 @@
-/*
- *  LoRaWAN module
- *
- *  Copyright (C) Libelium Comunicaciones Distribuidas S.L.
- *  http://www.libelium.com
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see http://www.gnu.org/licenses/.
- *
- *  Version:           0.4
- *  Design:            David Gascón
- *  Implementation:    Yuri Carmona & Ruben Martin
- */
+
 
 #include "arduPiLoRaWAN.h"
 #include <sw/redis++/redis++.h>
@@ -36,6 +14,9 @@ using namespace sw::redis;
 
 uint8_t sock = SOCKET0;
 uint8_t error;
+uint8_t PORT = 3;
+
+char data[] = "0102030405060708090A0B0C0D0E0F";
 /*********************************************************
  *  IF YOUR ARDUINO CODE HAS OTHER FUNCTIONS APART FROM  *
  *  setup() AND loop() YOU MUST DECLARE THEM HERE        *
@@ -82,6 +63,66 @@ void setup()
     printf("3.2. Get Device EUI error = %d\n", error);
   }
   
+  error = LoRaWAN.sendUnconfirmed(PORT, data);
+  
+    // Error messages:
+    /*
+     * '6' : Module hasn't joined a network
+     * '5' : Sending error
+     * '4' : Error with data length	  
+     * '2' : Module didn't response
+     * '1' : Module communication error   
+     */
+    // Check status
+    if( error == 0 ) 
+    {
+      printf("3. Send Unconfirmed packet OK\n");     
+      if (LoRaWAN._dataReceived == true)
+      { 
+        printf("   There's data on port number %d.\r\n", LoRaWAN._port);
+        printf("   Data: %s\n", LoRaWAN._data);
+      }
+    }
+    else 
+    {
+      printf("3. Send Unconfirmed packet error = %d\n", error); 
+    }
+  }
+  else 
+  {
+    printf("2. Join network error = %d\n",error);
+  }
+
+  
+  //////////////////////////////////////////////
+  // 4. Clean channels
+  //////////////////////////////////////////////
+  error = LoRaWAN.reset();
+
+  // Reset channels
+  if( error == 0 ) 
+  {
+    printf("4. Clean channels OK\n");     
+  }
+  else 
+  {
+    printf("4. Clean channels error = %d\n", error); 
+  }
+  
+  //////////////////////////////////////////////
+  // 5. Switch off
+  //////////////////////////////////////////////
+  error = LoRaWAN.OFF(sock);
+
+  // Check status
+  if( error == 0 ) 
+  {
+    printf("5. Switch OFF OK\n");     
+  }
+  else 
+  {
+    printf("5. Switch OFF error = %d\n",error); 
+  }
   
 	
 }
