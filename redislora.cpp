@@ -63,7 +63,102 @@ void setup()
     printf("3.2. Get Device EUI error = %d\n", error);
   }
   
-  error = LoRaWAN.sendUnconfirmed(PORT, data);
+    error = LoRaWAN.setAppEUI(APP_EUI);
+
+  // Check status
+  if( error == 0 ) 
+  {
+    printf("3. Application EUI set OK\n");     
+  }
+  else 
+  {
+    printf("3. Application EUI set error = %d\n", error); 
+  }
+
+
+  //////////////////////////////////////////////
+  // 4. Set Application Session Key
+  //////////////////////////////////////////////
+
+  error = LoRaWAN.setAppKey(APP_KEY);
+
+  // Check status
+  if( error == 0 ) 
+  {
+    printf("4. Application Key set OK\n");     
+  }
+  else 
+  {
+    printf("4. Application Key set error = %d\n",error); 
+  }
+
+
+  //////////////////////////////////////////////
+  // 5. Save configuration
+  //////////////////////////////////////////////
+  
+  error = LoRaWAN.saveConfig();
+
+  // Check status
+  if( error == 0 ) 
+  {
+    printf("5. Save configuration OK\n");     
+  }
+  else 
+  {
+    printf("5. Save configuration error = %d\n", error);
+  }
+
+
+  printf("\n------------------------------------\n");
+  printf("Module configured\n");
+  printf("------------------------------------\n\n");
+  
+  LoRaWAN.getDeviceEUI();
+  printf("Device EUI: %s\n", LoRaWAN._devEUI);
+  
+  LoRaWAN.getDeviceAddr();
+  printf("Device Address: %s\n\n", LoRaWAN._devAddr);
+  
+	
+}
+
+void loop(void)
+{
+	 //////////////////////////////////////////////
+  // 1. Switch on
+  //////////////////////////////////////////////
+
+  error = LoRaWAN.ON(sock);
+
+
+  // Check status
+  if( error == 0 ) 
+  {
+    printf("1. Switch ON OK\n");     
+  }
+  else 
+  {
+    printf("1. Switch ON error = %d\n", error);
+  }
+  
+  
+  //////////////////////////////////////////////
+  // 2. Join network
+  //////////////////////////////////////////////
+
+  error = LoRaWAN.joinOTAA();
+
+  // Check status
+  if( error == 0 ) 
+  {
+    printf("2. Join network OK\n");     
+
+    //////////////////////////////////////////////
+    // 3. Send unconfirmed packet 
+    //////////////////////////////////////////////
+  
+    error = LoRaWAN.sendUnconfirmed(PORT, data);
   
     // Error messages:
     /*
@@ -108,7 +203,7 @@ void setup()
   {
     printf("4. Clean channels error = %d\n", error); 
   }
-  
+
   //////////////////////////////////////////////
   // 5. Switch off
   //////////////////////////////////////////////
@@ -124,11 +219,9 @@ void setup()
     printf("5. Switch OFF error = %d\n",error); 
   }
   
-	
-}
-
-void loop(void)
-{
+  
+  printf("\n");
+  delay(10000);
 }
 
 int main (){
