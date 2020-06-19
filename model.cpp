@@ -11,7 +11,7 @@ void loop(void)
 }
 
 void functie_custom(){
-// de asemenea se pot realiza si alte functii custom acestea fiind apelate in int main sau in orice alta fuctie care este 
+// de asemenea se pot realiza si alte functii custom acestea fiind apelate in int main sau in orice alta functie care este 
 //apelata in int main
 }
 
