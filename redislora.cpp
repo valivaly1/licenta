@@ -30,7 +30,7 @@ void setup()
 {
 	
 	auto redis = Redis("tcp://127.0.0.1:6378");
-	auto val = redis.get(v);
+	auto val = redis.get("v");
 	if(val)
 	std::cout << *val << std::endl;
 	}
