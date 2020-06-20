@@ -15,6 +15,10 @@ using namespace sw::redis;
 uint8_t sock = SOCKET0;
 uint8_t error;
 uint8_t PORT = 3;
+char DEVICE_EUI[]  = "0004A30B00E987BB;
+char DEVICE_ADDR[] = "2601166B";
+char NWK_SESSION_KEY[] = "BA514F64BC8381FB3BDC2D7CB29721EF";
+char APP_SESSION_KEY[] = "EA8F7B91318B4F507D8C7DA1276C7922";
 
 char data[] = "0102030405060708090A0B0C0D0E0F";
 /*********************************************************
@@ -31,7 +35,7 @@ void setup()
 	
 	auto redis = Redis("tcp://127.0.0.1:6378");
 	auto val = redis.get("v");
-	if(val)
+	if(val){
 	std::cout << *val << std::endl;
 	}
 	else{
@@ -39,62 +43,89 @@ void setup()
 	}
 	 error = LoRaWAN.ON(sock);
 
-  // Check status
-  if( error == 0 ) 
-  {
-    printf("1. Switch ON OK\n");
-  }
-  else 
-  {
-    printf("1. Switch ON error = %d\n", error);
-  }
-  
-  
-	error = LoRaWAN.getDeviceEUI();
+  error = LoRaWAN.ON(sock);
 
   // Check status
   if( error == 0 ) 
   {
-    printf("3.2. Get Device EUI OK. ");
-    printf("Device EUI: %s\n",LoRaWAN._devEUI);
+    printf("1. Switch ON OK\n");     
   }
   else 
   {
-    printf("3.2. Get Device EUI error = %d\n", error);
-  }
-  
-    error = LoRaWAN.setAppEUI(APP_EUI);
-
-  // Check status
-  if( error == 0 ) 
-  {
-    printf("3. Application EUI set OK\n");     
-  }
-  else 
-  {
-    printf("3. Application EUI set error = %d\n", error); 
+    printf("1. Switch ON error = %d\n", error); 
   }
 
 
   //////////////////////////////////////////////
-  // 4. Set Application Session Key
+  // 2. Set Device EUI
   //////////////////////////////////////////////
 
-  error = LoRaWAN.setAppKey(APP_KEY);
+  error = LoRaWAN.setDeviceEUI(DEVICE_EUI);
 
   // Check status
   if( error == 0 ) 
   {
-    printf("4. Application Key set OK\n");     
+    printf("2. Device EUI set OK\n");     
   }
   else 
   {
-    printf("4. Application Key set error = %d\n",error); 
+    printf("2. Device EUI set error = %d\n", error); 
   }
 
 
   //////////////////////////////////////////////
-  // 5. Save configuration
+  // 3. Set Device Address
+  //////////////////////////////////////////////
+
+  error = LoRaWAN.setDeviceAddr(DEVICE_ADDR);
+
+  // Check status
+  if( error == 0 ) 
+  {
+    printf("3. Device address set OK\n");     
+  }
+  else 
+  {
+    printf("3. Device address set error = %d\n", error); 
+  }
+
+
+  //////////////////////////////////////////////
+  // 4. Set Network Session Key
+  //////////////////////////////////////////////
+ 
+  error = LoRaWAN.setNwkSessionKey(NWK_SESSION_KEY);
+
+  // Check status
+  if( error == 0 ) 
+  {
+    printf("4. Network Session Key set OK\n");     
+  }
+  else 
+  {
+    printf("4. Network Session Key set error = %d\n",error); 
+  }
+
+
+  //////////////////////////////////////////////
+  // 5. Set Application Session Key
+  //////////////////////////////////////////////
+
+  error = LoRaWAN.setAppSessionKey(APP_SESSION_KEY);
+
+  // Check status
+  if( error == 0 ) 
+  {
+    printf("5. Application Session Key set OK\n");     
+  }
+  else 
+  {
+    printf("5. Application Session Key set error = %d\n", error); 
+  }
+
+
+  //////////////////////////////////////////////
+  // 6. Save configuration
   //////////////////////////////////////////////
   
   error = LoRaWAN.saveConfig();
@@ -102,11 +133,11 @@ void setup()
   // Check status
   if( error == 0 ) 
   {
-    printf("5. Save configuration OK\n");     
+    printf("6. Save configuration OK\n");     
   }
   else 
   {
-    printf("5. Save configuration error = %d\n", error);
+    printf("6. Save configuration error = %d\n", error);
   }
 
 
@@ -118,18 +149,13 @@ void setup()
   printf("Device EUI: %s\n", LoRaWAN._devEUI);
   
   LoRaWAN.getDeviceAddr();
-  printf("Device Address: %s\n\n", LoRaWAN._devAddr);
-  
+  printf("Device Address: %s\n\n", LoRaWAN._devAddr);  
 	
 }
 
 void loop(void)
 {
-	 //////////////////////////////////////////////
-  // 1. Switch on
-  //////////////////////////////////////////////
-
-  error = LoRaWAN.ON(sock);
+	error = LoRaWAN.ON(sock);
 
 
   // Check status
@@ -147,7 +173,7 @@ void loop(void)
   // 2. Join network
   //////////////////////////////////////////////
 
-  error = LoRaWAN.joinOTAA();
+  error = LoRaWAN.joinABP();
 
   // Check status
   if( error == 0 ) 
@@ -204,6 +230,7 @@ void loop(void)
     printf("4. Clean channels error = %d\n", error); 
   }
 
+
   //////////////////////////////////////////////
   // 5. Switch off
   //////////////////////////////////////////////
@@ -221,7 +248,7 @@ void loop(void)
   
   
   printf("\n");
-  delay(10000);
+  delay(5000);
 }
 
 int main (){
